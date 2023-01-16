@@ -46,8 +46,12 @@ def test_d9p(ds):
 
 
 @pytest.mark.answer_test
-@pytest.mark.parametrize("field", _fields)
-@pytest.mark.parametrize("dobj_name", [None, ("sphere", ("max", (0.1, "unitary")))])
+@pytest.mark.parametrize("field", _fields, ids=["_".join(field) for field in _fields])
+@pytest.mark.parametrize(
+    "dobj_name",
+    [None, ("sphere", ("max", (0.1, "unitary")))],
+    ids=("entire_domain", "small_sphere"),
+)
 def test_field_values(ds, field, dobj_name):
     """Test common combination of field values (answer test)."""
     is_particle_field = field[0] in _particle_types
@@ -55,12 +59,22 @@ def test_field_values(ds, field, dobj_name):
 
 
 @pytest.mark.answer_test
-@pytest.mark.parametrize("axis", [0, 1])
+@pytest.mark.parametrize("axis", [0, 1], ids=["x", "y"])
 @pytest.mark.parametrize(
-    "field", [field for field in _fields if field[0] not in _particle_types]
+    "field",
+    [field for field in _fields if field[0] not in _particle_types],
+    ids=["_".join(field) for field in _fields if field[0] not in _particle_types],
 )
-@pytest.mark.parametrize("dobj_name", [None, ("sphere", ("max", (0.1, "unitary")))])
-@pytest.mark.parametrize("weight_field", [None, ("gas", "density")])
+@pytest.mark.parametrize(
+    "dobj_name",
+    [None, ("sphere", ("max", (0.1, "unitary")))],
+    ids=("entire_domain", "small_sphere"),
+)
+@pytest.mark.parametrize(
+    "weight_field",
+    [None, ("gas", "density")],
+    ids=["no_weight", "weighted_by_density"],
+)
 def test_pixelized_projection(ds, axis, field, dobj_name, weight_field):
     """Test common combination of projection values (answer test)."""
     return pixelized_projection_values(
