@@ -38,15 +38,18 @@ _fields = defaultdict(
 
 
 def pytest_generate_tests(metafunc):
-    if "ds" in metafunc.fixturenames and "field" in metafunc.fixturenames:
-        params = []
-        for ds_name in _datasets:
-            params += list(product([ds_name], _fields[ds_name]))
-        metafunc.parametrize(
-            "ds,field",
-            params,
-            indirect=True,
-        )
+    if "ds" in metafunc.fixturenames:
+        if "field" in metafunc.fixturenames:
+            params = []
+            for ds_name in _datasets:
+                params += list(product([ds_name], _fields[ds_name]))
+            metafunc.parametrize(
+                "ds,field",
+                params,
+                indirect=True,
+            )
+        else:
+            metafunc.parametrize("ds", list(_datasets), indirect=True)
 
 
 @pytest.fixture
