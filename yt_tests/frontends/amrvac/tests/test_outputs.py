@@ -42,8 +42,10 @@ def test_grid_value(ds, field):
 )
 def test_pixelized_projection(ds, axis, field, dobj_name, weight_field):
     """Test common combination of projection values (answer test)."""
-    if ds.geometry != "cartesian" and axis == 1:
+    if ds.geometry == "cylindrical" and axis == 1:
         pytest.skip(f"Projection along 'y' is not supported for {ds.geometry} geometry")
+    if ds.geometry == "polar" and axis == 2:
+        pytest.skip(f"Projection along 'z' is not supported for {ds.geometry} geometry")
     return pixelized_projection_values(
         ds, axis, field, weight_field=weight_field, dobj_type=dobj_name
     )
