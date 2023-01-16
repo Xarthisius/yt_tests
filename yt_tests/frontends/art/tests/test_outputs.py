@@ -1,5 +1,6 @@
 """Basic test for ART frontend."""
 import pytest
+
 from yt.frontends.art.api import ARTDataset
 from yt.testing import (
     ParticleSelectionComparison,

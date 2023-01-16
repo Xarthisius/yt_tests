@@ -1,5 +1,6 @@
 # content of conftest.py
 import pytest
+
 from yt.utilities.answer_testing.framework import data_dir_load
 
 
