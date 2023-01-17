@@ -52,7 +52,7 @@ def pytest_generate_tests(metafunc):
             metafunc.parametrize("ds", list(_datasets), indirect=True)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def ds(request):
     if request.param in _datasets:
         return data_dir_load(_datasets[request.param])
@@ -60,6 +60,6 @@ def ds(request):
         raise ValueError("invalid internal test config")
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def field(request):
     return request.param

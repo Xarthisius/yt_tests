@@ -9,7 +9,7 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("ds", ["d9p"], indirect=True)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def ds(request):
     if request.param == "d9p":
         return data_dir_load("D9p_500/10MpcBox_HartGal_csf_a0.500.d")
