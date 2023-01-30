@@ -32,7 +32,7 @@ def test_index_override():
     )
     assert isinstance(ds, ArepoHDF5Dataset)
     ds.index
-    assert len(open(tmpname).read()) == 0
+    assert os.stat(tmpname).st_size > 0
 
 
 def test_arepo_tng59_periodicity(tng59_nobbox):
@@ -50,7 +50,6 @@ def test_nh_density(tng59_bbox):
     )
 
 
-@pytest.mark.xfail(True, reason="yt-project/yt#3327", raises=ValueError)
 def test_arepo_tng59_selection(tng59_bbox):
     psc = ParticleSelectionComparison(tng59_bbox)
     psc.run_defaults()
