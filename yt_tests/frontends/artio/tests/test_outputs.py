@@ -3,61 +3,18 @@ import pytest
 
 from yt.frontends.artio.api import ARTIODataset
 from yt.testing import assert_allclose_units, assert_equal, units_override_check
-from yt.utilities.answer_testing.answer_tests import (
-    field_values,
-    pixelized_projection_values,
-)
 from yt.utilities.answer_testing.framework import create_obj
+from yt_tests.small_patch import SPHSmallPatchTest
 
-_fields = (
-    ("gas", "temperature"),
-    ("gas", "density"),
-    ("gas", "velocity_magnitude"),
-    ("deposit", "all_density"),
-    ("deposit", "all_count"),
-)
+
+class TestARTIOSmallPatch(SPHSmallPatchTest):
+    pass
 
 
 def test_loading(ds):
     """Assert that sizmbhloz loads as ARTIODataset."""
     assert isinstance(ds, ARTIODataset)
     assert_equal(ds.particle_type_counts, {"N-BODY": 100000, "STAR": 110650})
-
-
-@pytest.mark.answer_test
-@pytest.mark.parametrize("field", _fields, ids=["_".join(field) for field in _fields])
-@pytest.mark.parametrize(
-    "dobj_name",
-    [None, ("sphere", ("max", (0.1, "unitary")))],
-    ids=("entire_domain", "small_sphere"),
-)
-def test_field_values(ds, dobj_name, field):
-    """Test common combination of field values (answer test)."""
-    return field_values(ds, field, obj_type=dobj_name, particle_type=False)
-
-
-@pytest.mark.answer_test
-@pytest.mark.parametrize(
-    "weight_field",
-    [None, ("gas", "density")],
-    ids=["no_weight", "weighted_by_density"],
-)
-@pytest.mark.parametrize(
-    "field",
-    _fields,
-    ids=["_".join(field) for field in _fields],
-)
-@pytest.mark.parametrize("axis", [0, 1, 2], ids=["x", "y", "z"])
-@pytest.mark.parametrize(
-    "dobj_name",
-    [None, ("sphere", ("max", (0.1, "unitary")))],
-    ids=("entire_domain", "small_sphere"),
-)
-def test_pixelized_projection(ds, dobj_name, axis, field, weight_field):
-    """Test common combination of projection values (answer test)."""
-    return pixelized_projection_values(
-        ds, axis, field, weight_field=weight_field, dobj_type=dobj_name
-    )
 
 
 @pytest.mark.parametrize(
@@ -80,7 +37,6 @@ def test_units_override():
 
 def test_particle_derived_field(ds):
     """Test to make sure we get back data in the correct units during field detection."""
-
     def star_age_alias(field, data):
         """Test field."""
         return data["STAR", "age"].in_units("Myr")

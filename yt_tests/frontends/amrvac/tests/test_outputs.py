@@ -6,7 +6,7 @@ from yt.frontends.amrvac.api import AMRVACDataset
 from yt.utilities.answer_testing.framework import data_dir_load
 from yt.utilities.answer_testing.testing_utilities import can_run_ds
 
-from yt_tests.small_patch import TestSmallPatch
+from yt_tests.small_patch import SmallPatchTest
 
 khi_cartesian_2D = "amrvac/kh_2d0000.dat"
 blastwave_cartesian_3D = "amrvac/bw_3d0000.dat"
@@ -38,7 +38,20 @@ def test_domain_size():
         assert int(w) == 2
 
 
-class AMRVACTestSmallPatch(TestSmallPatch):
+class TestAMRVACSmallPatch(SmallPatchTest):
+
+    @pytest.mark.answer_test
+    @pytest.mark.parametrize(
+        "dobj_name",
+        [None, ("sphere", ("max", (0.1, "unitary")))],
+        ids=("entire_domain", "small_sphere"),
+    )
+    @pytest.mark.parametrize("axis", [0, 1, 2], ids=["x", "y", "z"])
+    @pytest.mark.parametrize(
+        "weight_field",
+        [None, ("gas", "density")],
+        ids=["no_weight", "weighted_by_density"],
+    )
     def test_pixelized_projection(self, ds, axis, field, dobj_name, weight_field):
         """Test common combination of projection values (answer test)."""
         if ds.geometry == "cylindrical" and axis == 1:

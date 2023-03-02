@@ -1,10 +1,9 @@
-import os
-from itertools import product
-
 import pytest
 
 from yt.utilities.answer_testing.framework import data_dir_load
 from yt.utilities.exceptions import YTAmbiguousDataType, YTUnidentifiedDataType
+
+from yt_tests.small_patch import parameterize_sph_patch_tests
 
 cr_h5 = "ArepoCosmicRays/snapshot_039.hdf5"
 bullet_h5 = "ArepoBullet/snapshot_150.hdf5"
@@ -36,26 +35,13 @@ tng59_fields = [
 
 
 def pytest_generate_tests(metafunc):
+    print("!!!")
     if "field" in metafunc.fixturenames:
-        params = []
-        for ds_name, fields in zip(
-            [bullet_h5, tng59_h5, cr_h5], [bullet_fields, tng59_fields, cr_fields]
-        ):
-            params += [(_[0], *_[1]) for _ in product([ds_name], fields)]
-
-            # (ds, ds_str_repr, ds_nparticles, field, weight, ds_obj, axis)
-        ids = [
-            (os.path.splitext(os.path.basename(dsname))[0], "_".join(f), "_".join(w))
-            if w
-            else (
-                os.path.splitext(os.path.basename(dsname))[0],
-                "_".join(f),
-                "no_weight",
-            )
-            for dsname, f, w in params
-        ]
-        ids = ["-".join(_) for _ in ids]
-        print(ids)
+        params, ids = parameterize_sph_patch_tests(
+            [bullet_h5, tng59_h5, cr_h5],
+            [bullet_fields, tng59_fields, cr_fields]
+        )
+        print(params, ids)
         metafunc.parametrize(
             "ds,field,weight_field",
             params,
